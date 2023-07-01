@@ -1,7 +1,10 @@
-const port = 3000;
-
 import express, { Request, Response, Router, Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from '@/swagger';
 import {apiRoutes} from '@/routes';
+import config from '@/config'
+
+const port = config.APP_PORT;
 
 const app: Express = express();
 
@@ -13,5 +16,9 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/api', apiRoutes)
+
+
+// Serve Swagger API documentation
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 export default app;

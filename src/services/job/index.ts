@@ -1,26 +1,33 @@
+import prisma from '@/prisma';
 import { getResponse as getChatGptResponse } from '@/services/chatgpt'
+import { Job, JobWithoutId } from '@/types';
 import { ChatCompletionRequestMessage } from 'openai';
 
-export const generateJobDescription = async () => {
-    const jobTitle = 'Software Engineer';
-    const jobLocation = 'San Francisco';
-    const jobDuration = 'Full-time';
-    const jobStartDate = 'September 1, 2023';
-    const jobRequirements = '3+ years of experience in software development';
-    const companyDetails = 'XYZ Tech Inc. is a leading technology company specializing in software solutions.';
-    const contactDetails = 'For more information, please contact us at jobs@xyztech.com';
-    const jobPublishEndDate = 'July 15, 2023';
+export const generateAIJobDescription = async (jobInfo: Job, language: string): Promise<string> => {
+
+    const {
+        title,
+        location,
+        duration,
+        startDate,
+        requirements,
+        companyDetails,
+        contactDetails,
+        publishEndDate,
+        duty,
+        id
+    } = jobInfo;
 
     const prompt = `
-    You are AI work in staffing company, please provide AI generated job description for job has title is ${jobTitle} and Job Location ${jobLocation} Job Duration ${jobDuration}
-    Job Start Date ${jobStartDate}
-    Job Requirements ${jobRequirements}
-
+    You are AI work in staffing company, please provide AI generated job description for job has title is ${title} and Job Location ${location} Job Duration ${duration}
+    Job Start Date ${startDate}
+    Job Requirements ${requirements}
+    Job Duty is ${duty}
     Company Details ${companyDetails}
     Contact Details ${contactDetails}
-    Job Publish End Date ${jobPublishEndDate}
-
-    Please try to avoid listing style as much as possible and I would like it in Finnish. Return in html format, include utf-8 to show in correct language. The lenght should be same with one A4
+    Job Publish End Date ${publishEndDate}
+    Remember to ask to add this id ${id} in the contact details as job id
+    Please try to use sentences and paragraph as much as possible and I would like it in ${language}. Return in text with utf-8 format but do not include body and html tag
     `;
 
     const messages: ChatCompletionRequestMessage[] = [
@@ -30,4 +37,33 @@ export const generateJobDescription = async () => {
     const result = await getChatGptResponse(messages);
 
     return result?.content || '';
+}
+
+export async function getAllJobs(): Promise<Job[]> {
+    return prisma.job.findMany();
+}
+
+export async function getJobById(id: string): Promise<Job | null> {
+    return await prisma.job.findUnique({
+        where: { id },
+    });
+}
+
+export async function createJob(jobData: JobWithoutId): Promise<Job> {
+    return await prisma.job.create({
+        data: jobData,
+    });
+}
+
+export async function updateJob(id: string, jobData: JobWithoutId): Promise<Job> {
+    return await prisma.job.update({
+        where: { id },
+        data: jobData,
+    });
+}
+
+export async function deleteJob(id: string): Promise<void> {
+    await prisma.job.delete({
+        where: { id },
+    });
 }
