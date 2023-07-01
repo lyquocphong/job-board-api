@@ -9,5 +9,8 @@ module.exports = {
     moduleFileExtensions: ['ts', 'js'],
     testMatch: ['<rootDir>/**/*.spec.(ts|js)'],
     coverageDirectory: './coverage',
-    collectCoverageFrom: ['src/**/*.(ts|js)', '!src/**/*.d.ts']
+    collectCoverageFrom: ['src/**/*.(ts|js)', '!src/**/*.d.ts'],
+    setupFiles: [
+        "dotenv/config"
+    ]
 };
