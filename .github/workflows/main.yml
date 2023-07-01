@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: |
+          echo "OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}"
+          npm test
+        env: # Or as an environment variable
+          OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}

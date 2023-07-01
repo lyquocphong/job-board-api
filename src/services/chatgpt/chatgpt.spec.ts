@@ -1,4 +1,4 @@
-import { getResponse as getChatGptResponse } from '@/services/chatgpt';
+import { getResponse as getChatGptResponse } from '@/services/chatgpt'
 import { ChatCompletionRequestMessage } from 'openai';
 
 describe('Test chatGPT working', () => {
