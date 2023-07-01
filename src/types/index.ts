@@ -13,7 +13,7 @@ export interface GenerateRouteOption {
 }
 
 export interface Job {
-    id: number;
+    id: string;
     title: string;
     location: string;
     duration: string;

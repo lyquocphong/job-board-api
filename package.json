@@ -5,6 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
+    "docker:dev": "docker-compose --env-file docker.env up",
     "test": "jest --detectOpenHandles"
   },
   "repository": {
@@ -36,7 +37,9 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@prisma/client": "^4.16.2",
     "joi": "^17.9.2",
-    "openai": "^3.3.0"
+    "openai": "^3.3.0",
+    "prisma": "^4.16.2"
   }
 }

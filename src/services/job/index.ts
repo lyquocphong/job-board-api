@@ -1,8 +1,9 @@
+import prisma from '@/prisma';
 import { getResponse as getChatGptResponse } from '@/services/chatgpt'
-import { JobWithoutId } from '@/types';
+import { Job, JobWithoutId } from '@/types';
 import { ChatCompletionRequestMessage } from 'openai';
 
-export const generateAIJobDescription = async (jobInfo: JobWithoutId, language: string): Promise<string> => {
+export const generateAIJobDescription = async (jobInfo: Job, language: string): Promise<string> => {
 
     const {
         title,
@@ -13,7 +14,8 @@ export const generateAIJobDescription = async (jobInfo: JobWithoutId, language: 
         companyDetails,
         contactDetails,
         publishEndDate,
-        duty
+        duty,
+        id
     } = jobInfo;
 
     const prompt = `
@@ -24,7 +26,7 @@ export const generateAIJobDescription = async (jobInfo: JobWithoutId, language: 
     Company Details ${companyDetails}
     Contact Details ${contactDetails}
     Job Publish End Date ${publishEndDate}
-
+    Remember to ask to add this id ${id} in the contact details as job id
     Please try to use sentences and paragraph as much as possible and I would like it in ${language}. Return in html format, include utf-8 to show in correct language
     `;
 
@@ -35,4 +37,33 @@ export const generateAIJobDescription = async (jobInfo: JobWithoutId, language: 
     const result = await getChatGptResponse(messages);
 
     return result?.content || '';
+}
+
+export async function getAllJobs(): Promise<Job[]> {
+    return prisma.job.findMany();
+}
+
+export async function getJobById(id: string): Promise<Job | null> {
+    return await prisma.job.findUnique({
+        where: { id },
+    });
+}
+
+export async function createJob(jobData: JobWithoutId): Promise<Job> {
+    return await prisma.job.create({
+        data: jobData,
+    });
+}
+
+export async function updateJob(id: string, jobData: JobWithoutId): Promise<Job> {
+    return await prisma.job.update({
+        where: { id },
+        data: jobData,
+    });
+}
+
+export async function deleteJob(id: string): Promise<void> {
+    await prisma.job.delete({
+        where: { id },
+    });
 }

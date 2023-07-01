@@ -14,13 +14,36 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: node:18
+    env_file:
+      - docker.env
     environment:
+      - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
+    working_dir: /app
+    command: sh -c "npm start"
+    volumes:
+      - .:/app
     ports:
       - '3000:3000'
+    depends_on:
+      - db
+
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     DATABASE_URL: ${DATABASE_URL}
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - db
+  
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
     depends_on:
       - db
 
