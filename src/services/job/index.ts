@@ -1,26 +1,31 @@
 import { getResponse as getChatGptResponse } from '@/services/chatgpt'
+import { JobWithoutId } from '@/types';
 import { ChatCompletionRequestMessage } from 'openai';
 
-export const generateJobDescription = async () => {
-    const jobTitle = 'Software Engineer';
-    const jobLocation = 'San Francisco';
-    const jobDuration = 'Full-time';
-    const jobStartDate = 'September 1, 2023';
-    const jobRequirements = '3+ years of experience in software development';
-    const companyDetails = 'XYZ Tech Inc. is a leading technology company specializing in software solutions.';
-    const contactDetails = 'For more information, please contact us at jobs@xyztech.com';
-    const jobPublishEndDate = 'July 15, 2023';
+export const generateAIJobDescription = async (jobInfo: JobWithoutId, language: string): Promise<string> => {
+
+    const {
+        title,
+        location,
+        duration,
+        startDate,
+        requirements,
+        companyDetails,
+        contactDetails,
+        publishEndDate,
+        duty
+    } = jobInfo;
 
     const prompt = `
-    You are AI work in staffing company, please provide AI generated job description for job has title is ${jobTitle} and Job Location ${jobLocation} Job Duration ${jobDuration}
-    Job Start Date ${jobStartDate}
-    Job Requirements ${jobRequirements}
-
+    You are AI work in staffing company, please provide AI generated job description for job has title is ${title} and Job Location ${location} Job Duration ${duration}
+    Job Start Date ${startDate}
+    Job Requirements ${requirements}
+    Job Duty is ${duty}
     Company Details ${companyDetails}
     Contact Details ${contactDetails}
-    Job Publish End Date ${jobPublishEndDate}
+    Job Publish End Date ${publishEndDate}
 
-    Please try to avoid listing style as much as possible and I would like it in Finnish. Return in html format, include utf-8 to show in correct language. The lenght should be same with one A4
+    Please try to use sentences and paragraph as much as possible and I would like it in ${language}. Return in html format, include utf-8 to show in correct language
     `;
 
     const messages: ChatCompletionRequestMessage[] = [

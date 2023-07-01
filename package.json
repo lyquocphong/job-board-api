@@ -36,6 +36,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "joi": "^17.9.2",
     "openai": "^3.3.0"
   }
 }

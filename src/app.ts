@@ -1,7 +1,8 @@
-const port = 3000;
-
 import express, { Request, Response, Router, Express } from 'express';
 import {apiRoutes} from '@/routes';
+import config from '@/config'
+
+const port = config.APP_PORT;
 
 const app: Express = express();
 
