@@ -9,7 +9,7 @@ on:
       - development
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +26,8 @@ jobs:
 
       - name: Run tests
         run: |
-          echo "OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}"
+          echo "OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }} and APP_PORT: ${{ env.APP_PORT }}"
           npm test
         env: # Or as an environment variable
           OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
+          APP_PORT: ${{ vars.APP_PORT }}

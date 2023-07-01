@@ -27,7 +27,7 @@ export const generateAIJobDescription = async (jobInfo: Job, language: string): 
     Contact Details ${contactDetails}
     Job Publish End Date ${publishEndDate}
     Remember to ask to add this id ${id} in the contact details as job id
-    Please try to use sentences and paragraph as much as possible and I would like it in ${language}. Return in html format, include utf-8 to show in correct language
+    Please try to use sentences and paragraph as much as possible and I would like it in ${language}. Return in text with utf-8 format but do not include body and html tag
     `;
 
     const messages: ChatCompletionRequestMessage[] = [
