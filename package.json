@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
     "docker:dev": "docker-compose --env-file docker.env up",
+    "pretest": "dotenv -e .env.test -- npx prisma migrate reset --force",
     "test": "dotenv -e .env.test -- jest --detectOpenHandles ",
     "migrate:test": "dotenv -e .env.test -- npx prisma migrate dev",
     "lint": "eslint 'src/**/*.ts' --fix"
