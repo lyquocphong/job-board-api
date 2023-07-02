@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - development
+      - master
+  pull_request:
+    branches:
+      - development
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: jobboard
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Migrate db
+        run: npx prisma migrate dev
+        env: # Or as an environment variable          
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+
+      - name: Run tests
+        run: |
+          echo "OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }} and APP_PORT: ${{ env.APP_PORT }}"
+          npm test
+        env: # Or as an environment variable
+          OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
+          APP_PORT: ${{ vars.APP_PORT }}
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
