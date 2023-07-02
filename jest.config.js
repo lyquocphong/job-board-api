@@ -12,5 +12,10 @@ module.exports = {
     collectCoverageFrom: ['src/**/*.(ts|js)', '!src/**/*.d.ts'],
     setupFiles: [
         "dotenv/config"
-    ]
+    ],
+    setupFilesAfterEnv: ['./jest.setup.js'],
+    moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+        '^src/(.*)$': '<rootDir>/src/$1', // Add this line
+      },
 };
