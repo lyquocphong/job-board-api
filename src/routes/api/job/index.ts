@@ -2,8 +2,7 @@ import {
   Router,
   Request,
   Response,
-  RequestHandler,
-  NextFunction,
+  RequestHandler
 } from "express";
 import Joi from "joi";
 import {
@@ -11,12 +10,12 @@ import {
   generateAIJobDescription,
   getAllJobs,
   getJobById,
+  deleteJob
 } from "@/services/job";
 import {
   CreateJobRequest,
   GenerateRouteOption,
-  Job,
-  JobWithoutId,
+  Job
 } from "@/types";
 import generateRoute from "@/utils/routes";
 
@@ -116,7 +115,7 @@ const mainPath = "/jobs";
  *             schema:
  *               type: object
  *               properties:
- *                 description:
+ *                 data:
  *                   type: string
  *                   example: 'This is the generated job description in the specified language.'
  *       '404':
@@ -126,9 +125,19 @@ const mainPath = "/jobs";
  *             schema:
  *               type: object
  *               properties:
- *                 error:
- *                   type: string
- *                   example: 'Job not found.'
+ *                 result:
+ *                   type: boolean
+ *                   example: false
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: boolean
+ *                   example: false
  */
 const generateJobDescription: RequestHandler = async (
   req: Request,
@@ -139,7 +148,9 @@ const generateJobDescription: RequestHandler = async (
   const job = await getJobById(jobId);
 
   if (!job) {
-    throw new Error("Do not found");
+    res.status(500)
+    res.json({ result: false });    
+    return;
   }
 
   const description = await generateAIJobDescription(job, lang);
@@ -214,6 +225,68 @@ const createJobHandler: RequestHandler<{}, {}, CreateJobRequest> = async (
   res.json({ data: newJob });
 };
 
+/**
+ * @swagger
+ * /jobs/{jobId}:
+ *   delete:
+ *     summary: Delete a job
+ *     parameters:
+ *       - in: path
+ *         name: jobId
+ *         schema:
+ *           type: string
+ *           required: true
+ *         description: ID of the job to delete
+ *     responses:
+ *       '200':
+ *         description: Job deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: boolean
+ *                   example: true
+ *       '404':
+ *         description: Job not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: boolean
+ *                   example: false
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: boolean
+ *                   example: false
+ */
+const deleteJobHandler: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { jobId } = req.params;
+
+  const job = await getJobById(jobId);
+
+  if (!job) {
+    res.status(500)
+    res.json({ result: false });    
+    return;
+  }
+
+  await deleteJob(jobId);
+  res.json({ result: true });
+};
+
 const upsertJobSchema = Joi.object({
   title: Joi.string().required(),
   location: Joi.string().required(),
@@ -242,6 +315,11 @@ const routes: GenerateRouteOption[] = [
     path: `${mainPath}/:jobId/aidescription/:lang`,
     method: "get",
     handler: generateJobDescription,
+  },
+  {
+    path: `${mainPath}/:jobId`,
+    method: "delete",
+    handler: deleteJobHandler,
   },
 ];
 
