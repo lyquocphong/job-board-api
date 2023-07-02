@@ -1,6 +1,6 @@
 # Job Board API
 
-REST API that exposes endpoints for the Job Board frontend.
+The Job Board REST API is a backend service that provides endpoints for managing job listings. It leverages the power of ChatGPT, an AI-based language model, to generate AI descriptions for job postings. This API allows users to create, update, and delete job listings, as well as retrieve job details and generate AI descriptions for specific jobs.
 
 - Repository: [job-board-board](https://github.com/lyquocphong/job-board-api)
 
@@ -24,11 +24,9 @@ REST API that exposes endpoints for the Job Board frontend.
 - Need to get rid of eslint error and use husky to prevent commit with bad code
 
 ## Dependencies
-------------
 
 -   Node.js (v18)
 -   Docker
--  
 
 ## Author
 
