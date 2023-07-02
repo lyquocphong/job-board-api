@@ -1,10 +1,10 @@
-import request from 'supertest';
-import app from '@/app';
+import request from "supertest";
+import app from "@/app";
 
-describe('Routes', () => {
+describe("Routes", () => {
   it('should return "Hello, World!"', async () => {
-    const response = await request(app).get('/')
+    const response = await request(app).get("/");
     expect(response.status).toBe(200);
-    expect(response.text).toBe('Hello, World!');
+    expect(response.text).toBe("Hello, World!");
   });
 });
