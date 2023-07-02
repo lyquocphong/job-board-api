@@ -91,25 +91,25 @@ describe("Job Service", () => {
     //   expect(updatedJob).toMatchObject(updatedJobData);
     // });
 
-    // it('should delete a job', async () => {
-    //   const jobData = {
-    //     title: 'Job Title',
-    //     location: 'Job Location',
-    //     duration: 'Job Duration',
-    //     startDate: 'Job Start Date',
-    //     requirements: 'Job Requirements',
-    //     companyDetails: 'Job Company Details',
-    //     contactDetails: 'Job Contact Details',
-    //     publishEndDate: 'Job Publish End Date',
-    //     duty: 'Job Duty',
-    //   };
+    it('should delete a job', async () => {
+      const jobData = {
+        title: 'Job Title',
+        location: 'Job Location',
+        duration: 'Job Duration',
+        startDate: 'Job Start Date',
+        requirements: 'Job Requirements',
+        companyDetails: 'Job Company Details',
+        contactDetails: 'Job Contact Details',
+        publishEndDate: 'Job Publish End Date',
+        duty: 'Job Duty',
+      };
 
-    //   const createdJob = await createJob(jobData);
+      const createdJob = await createJob(jobData);
 
-    //   await deleteJob(createdJob.id);
+      await deleteJob(createdJob.id);
 
-    //   const retrievedJob = await getJobById(createdJob.id);
+      const retrievedJob = await getJobById(createdJob.id);
 
-    //   expect(retrievedJob).toBeNull();
-    // });
+      expect(retrievedJob).toBeNull();
+    });
 });
