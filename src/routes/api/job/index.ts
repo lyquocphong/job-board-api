@@ -1,12 +1,28 @@
-import { Router, Request, Response, RequestHandler, NextFunction } from 'express';
-import { createJob, generateAIJobDescription, getAllJobs, getJobById } from '@/services/job'
-import { CreateJobRequest, GenerateRouteOption, Job, JobWithoutId } from '@/types'
-import generateRoute from '@/utils/routes'
-import Joi from 'joi';
+import {
+  Router,
+  Request,
+  Response,
+  RequestHandler,
+  NextFunction,
+} from "express";
+import Joi from "joi";
+import {
+  createJob,
+  generateAIJobDescription,
+  getAllJobs,
+  getJobById,
+} from "@/services/job";
+import {
+  CreateJobRequest,
+  GenerateRouteOption,
+  Job,
+  JobWithoutId,
+} from "@/types";
+import generateRoute from "@/utils/routes";
 
 const router: Router = Router();
 
-const mainPath = '/jobs';
+const mainPath = "/jobs";
 
 /**
  * @swagger
@@ -35,7 +51,7 @@ const mainPath = '/jobs';
  *           type: string
  *         duty:
  *           type: string
- * 
+ *
  *     CreateJobRequest:
  *       type: object
  *       properties:
@@ -57,7 +73,7 @@ const mainPath = '/jobs';
  *           type: string
  *         duty:
  *           type: string
- * 
+ *
  *     UpdateJobRequest:
  *       allOf:
  *         - $ref: '#/components/schemas/CreateJobRequest'
@@ -78,7 +94,6 @@ const mainPath = '/jobs';
  *         - publishEndDate
  *         - duty
  */
-
 
 /**
  * @swagger
@@ -120,17 +135,19 @@ const mainPath = '/jobs';
  *                   type: string
  *                   example: 'Job not found.'
  */
-const generateJobDescription: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+const generateJobDescription: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { jobId, lang } = req.params;
 
-  const { jobId, lang} = req.params;
-  
   const job = await getJobById(jobId);
 
   if (!job) {
-    throw new Error ('Do not found')
+    throw new Error("Do not found");
   }
 
-  const description = await generateAIJobDescription(job as Job, lang);
+  const description = await generateAIJobDescription(job, lang);
   res.json({ data: description });
 };
 
@@ -154,12 +171,14 @@ const generateJobDescription: RequestHandler = async (req: Request, res: Respons
  *       '500':
  *         description: Internal server error
  */
-const getAllJobHandler: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-
+const getAllJobHandler: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const jobs = await getAllJobs();
 
   res.json({ data: jobs });
-}
+};
 
 /**
  * @swagger
@@ -180,15 +199,27 @@ const getAllJobHandler: RequestHandler = async (req: Request, res: Response): Pr
  *             schema:
  *               $ref: '#/components/schemas/Job'
  */
-const createJobHandler: RequestHandler<{}, {}, CreateJobRequest> = async (req, res) => {
-  const { title, location, duration, startDate, requirements, companyDetails, contactDetails, publishEndDate } = req.body;
-  
+const createJobHandler: RequestHandler<{}, {}, CreateJobRequest> = async (
+  req,
+  res
+) => {
+  const {
+    title,
+    location,
+    duration,
+    startDate,
+    requirements,
+    companyDetails,
+    contactDetails,
+    publishEndDate,
+  } = req.body;
+
   const newJob: Job = await createJob(req.body);
 
   res.json({ data: newJob });
 };
 
-const upsertJobSchema = Joi.object({  
+const upsertJobSchema = Joi.object({
   title: Joi.string().required(),
   location: Joi.string().required(),
   duration: Joi.string().required(),
@@ -198,26 +229,26 @@ const upsertJobSchema = Joi.object({
   contactDetails: Joi.string().required(),
   publishEndDate: Joi.string().required(),
   duty: Joi.string().required(),
-})
+});
 
 const routes: GenerateRouteOption[] = [
   {
     path: `${mainPath}`,
-    method: 'get',
-    handler: getAllJobHandler
+    method: "get",
+    handler: getAllJobHandler,
   },
   {
     path: `${mainPath}`,
-    method: 'post',
+    method: "post",
     handler: createJobHandler,
-    schema: upsertJobSchema
+    schema: upsertJobSchema,
   },
   {
     path: `${mainPath}/:jobId/aidescription/:lang`,
-    method: 'get',
-    handler: generateJobDescription
-  }
-]
+    method: "get",
+    handler: generateJobDescription,
+  },
+];
 
 generateRoute(routes, router);
 
