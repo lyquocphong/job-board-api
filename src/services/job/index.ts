@@ -67,8 +67,8 @@ export async function updateJob(
   });
 }
 
-export async function deleteJob(id: string): Promise<void> {
-  await prisma.job.delete({
+export async function deleteJob(id: string): Promise<boolean> {
+  return await prisma.job.delete({
     where: { id },
-  });
+  }) !== null;
 }
