@@ -13,6 +13,16 @@ REST API that exposes endpoints for the Job Board frontend.
 - [Testing](##testing)
 - [License](#license)
 
+## Future Work
+
+- Implement user authentication and authorization.
+- Add pagination and sorting for job listings.
+- Implement search functionality.
+- Enhance error handling and validation.
+- Tuning way to generate description better
+- Caching to save the token when working with openai
+- Need to get rid of eslint error and use husky to prevent commit with bad code
+
 ## Dependencies
 ------------
 
@@ -64,20 +74,27 @@ The API will be accessible at `http://localhost:port`. The port is the one confi
 
 - Access the Swagger UI to explore and interact with API endpoints at `http://localhost:port/swagger`. The port is the one config in .env
 
-## Future Work
+## Environment variable
 
-- Implement user authentication and authorization.
-- Add pagination and sorting for job listings.
-- Implement search functionality.
-- Enhance error handling and validation.
-- Tuning way to generate description better
-- Caching to save the token when working with openai
+There is env.sample in project. After clone please do the following step:
+
+1. Create new file and name it .env from .env.sample
+2. Open the .env file and add this OPENAI_API_KEY="YOUR_OPENAI_API_KEY", we cannot put it in .env.sample because openai does not allow to leak it in public repository
+3. Create new file and name it .env.test from .env. This is the environment file to be use for testing and also for migrate database to dev when you run `npm run migrate:dev`
 
 ## Testing
 
-The API includes unit tests using the Jest framework.
+The API includes unit tests using the Jest framework. The 
 
 To run the tests, use the following command: `npm run test`
+
+## Linting
+
+The project uses ESLint for code linting. ESLint helps enforce coding style and best practices.
+
+To run ESLint, use the following command: `npm run lint`
+
+ESLint will analyze your code and report any errors or warnings based on the configured rules in the `.eslintrc.json` file.
 
 ## License
 
