@@ -78,11 +78,6 @@ const mainPath = "/jobs";
  *       allOf:
  *         - $ref: '#/components/schemas/CreateJobRequest'
  *         - type: object
- *       properties:
- *         id:
- *          # Returned by GET, not used in POST/PUT/PATCH
- *          type: integer
- *          readOnly: true
  *       required:
  *         - title
  *         - location
