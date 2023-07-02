@@ -13,3 +13,8 @@
 - Does not have authentication yet
 
 - First release is made for the first MVP
+
+### [1.1.0] - 2023-07-01
+
+- Added route to handle delete job and it use delete function from job service
+- Implemented tests for the job deletion functionality
