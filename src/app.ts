@@ -3,12 +3,18 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "@/swagger";
 import { apiRoutes } from "@/routes";
 import config from "@/config";
+import cors from "cors";
+import bodyParser from "body-parser";
 
 const port = config.APP_PORT;
 
 const app: Express = express();
 
+app.use(cors())
+
 app.use(express.json());
+
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // Sample route for demonstration
 app.get("/", (req: Request, res: Response) => {
