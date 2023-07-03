@@ -42,7 +42,11 @@ export const generateAIJobDescription = async (
 };
 
 export async function getAllJobs(): Promise<Job[]> {
-  return prisma.job.findMany();
+  return prisma.job.findMany({
+    orderBy: {
+      title: 'asc'
+    },
+  });
 }
 
 export async function getJobById(id: string): Promise<Job | null> {

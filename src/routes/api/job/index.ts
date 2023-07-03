@@ -10,7 +10,8 @@ import {
   generateAIJobDescription,
   getAllJobs,
   getJobById,
-  deleteJob
+  deleteJob,
+  updateJob
 } from "@/services/job";
 import {
   CreateJobRequest,
@@ -149,7 +150,7 @@ const generateJobDescription: RequestHandler = async (
 
   if (!job) {
     res.status(500)
-    res.json({ result: false });    
+    res.json({ result: false });
     return;
   }
 
@@ -204,6 +205,16 @@ const getAllJobHandler: RequestHandler = async (
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Job'
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: boolean
+ *                   example: false
  */
 const createJobHandler: RequestHandler<{}, {}, CreateJobRequest> = async (
   req,
@@ -279,7 +290,7 @@ const deleteJobHandler: RequestHandler = async (
 
   if (!job) {
     res.status(500)
-    res.json({ result: false });    
+    res.json({ result: false });
     return;
   }
 
@@ -302,33 +313,7 @@ const deleteJobHandler: RequestHandler = async (
  *       200:
  *         description: Successfully retrieved the job
  *         schema:
- *           type: object
- *           properties:
- *             data:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 title:
- *                   type: string
- *                 location:
- *                   type: string
- *                 duration:
- *                   type: string
- *                 startDate:
- *                   type: string
- *                   format: date
- *                 requirements:
- *                   type: string
- *                 companyDetails:
- *                   type: string
- *                 contactDetails:
- *                   type: string
- *                 publishEndDate:
- *                   type: string
- *                   format: date
- *                 duty:
- *                   type: string
+ *           $ref: '#/components/schemas/Job'
  *       500:
  *         description: Internal server error
  *         schema:
@@ -347,11 +332,75 @@ const getJobByIdHandler: RequestHandler = async (
 
   if (!job) {
     res.status(500)
-    res.json({ data: null });    
+    res.json({ data: null });
     return;
   }
   res.json({ data: job });
 };
+
+/**
+ * Update a job
+ * 
+ * @param {string} req.params.jobId - The ID of the job to update
+ * @param {IJob} req.body - The updated job data
+ * @returns {Promise<void>} - The update result
+ * @swagger
+ * /jobs/{jobId}:
+ *   put:
+ *     summary: Update a job
+ *     parameters:
+ *       - in: path
+ *         name: jobId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the job to update
+ *       - in: body
+ *         name: jobData
+ *         schema:
+ *           $ref: '#/components/schemas/UpdateJobRequest'
+ *         required: true
+ *         description: The updated job data
+ *     responses:
+ *       '200':
+ *         description: Successful update
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Job'
+ *       '500':
+ *         description: Error occurred
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: boolean
+ *                   description: Indicates the update result
+ *                   example: false  
+ */
+const updateJobHandler: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+
+  const { jobId } = req.params;
+
+  const job = await getJobById(jobId);
+
+  if (!job) {
+    res.status(500)
+    res.json({ data: null });
+    return;
+  }
+
+  const newData = req.body;
+
+  await updateJob(jobId, newData);
+  res.json({ data: newData });
+};
+
 
 const upsertJobSchema = Joi.object({
   title: Joi.string().required(),
@@ -378,6 +427,12 @@ const routes: GenerateRouteOption[] = [
     schema: upsertJobSchema,
   },
   {
+    path: `${mainPath}/:jobId`,
+    method: "put",
+    handler: updateJobHandler,
+    schema: upsertJobSchema,
+  },
+  {
     path: `${mainPath}/:jobId/aidescription/:lang`,
     method: "get",
     handler: generateJobDescription,
@@ -394,145 +449,6 @@ const routes: GenerateRouteOption[] = [
   },
 ];
 
-// app.get('/jobs/:id', async (req: Request, res: Response): Promise<void> => {
-//   const { id }: { id: string } = req.params;
-
-//   try {
-//     const job: Job | null = await prisma.job.findUnique({
-//       where: { id: Number(id) },
-//     });
-
-//     if (!job) {
-//       res.status(404).json({ error: 'Job not found' });
-//       return;
-//     }
-
-//     res.json(job);
-//   } catch (error) {
-//     res.status(500).json({ error: 'An error occurred while fetching the job' });
-//   }
-// });
-
 generateRoute(routes, router);
-
-// router.get('/jobs', (req: Request, res: Response) => {
-//   // Handle user retrieval logic here
-//   res.json({ message: 'Get jobs' });
-// });
-
-// app.get('/jobs', async (req: Request, res: Response): Promise<void> => {
-//   try {
-//     const jobs: Job[] = await prisma.job.findMany();
-//     res.json(jobs);
-//   } catch (error) {
-//     res.status(500).json({ error: 'An error occurred while fetching jobs' });
-//   }
-// });
-
-// app.get('/jobs/:id', async (req: Request, res: Response): Promise<void> => {
-//   const { id }: { id: string } = req.params;
-
-//   try {
-//     const job: Job | null = await prisma.job.findUnique({
-//       where: { id: Number(id) },
-//     });
-
-//     if (!job) {
-//       res.status(404).json({ error: 'Job not found' });
-//       return;
-//     }
-
-//     res.json(job);
-//   } catch (error) {
-//     res.status(500).json({ error: 'An error occurred while fetching the job' });
-//   }
-// });
-
-// app.post('/jobs', async (req: Request, res: Response): Promise<void> => {
-//   const {
-//     title,
-//     location,
-//     duration,
-//     startDate,
-//     description,
-//     requirements,
-//     companyDetails,
-//     contactDetails,
-//     publishEndDate,
-//   }: Job = req.body;
-
-//   try {
-//     const job: Job = await prisma.job.create({
-//       data: {
-//         title,
-//         location,
-//         duration,
-//         startDate,
-//         description,
-//         requirements,
-//         companyDetails,
-//         contactDetails,
-//         publishEndDate,
-//       },
-//     });
-
-//     res.json(job);
-//   } catch (error) {
-//     res.status(500).json({ error: 'An error occurred while creating the job' });
-//   }
-// });
-
-// app.put('/jobs/:id', async (req: Request, res: Response): Promise<void> => {
-//   const {
-//     id,
-//   }: { id: string } = req.params;
-
-//   const {
-//     title,
-//     location,
-//     duration,
-//     startDate,
-//     description,
-//     requirements,
-//     companyDetails,
-//     contactDetails,
-//     publishEndDate,
-//   }: Job = req.body;
-
-//   try {
-//     const updatedJob: Job = await prisma.job.update({
-//       where: { id: Number(id) },
-//       data: {
-//         title,
-//         location,
-//         duration,
-//         startDate,
-//         description,
-//         requirements,
-//         companyDetails,
-//         contactDetails,
-//         publishEndDate,
-//       },
-//     });
-
-//     res.json(updatedJob);
-//   } catch (error) {
-//     res.status(500).json({ error: 'An error occurred while updating the job' });
-//   }
-// });
-
-// app.delete('/jobs/:id', async (req: Request, res: Response): Promise<void> => {
-//   const { id }: { id: string } = req.params;
-
-//   try {
-//     const deletedJob: Job | null = await prisma.job.delete({
-//       where: { id: Number(id) },
-//     });
-
-//     res.json(deletedJob);
-//   } catch (error) {
-//     res.status(500).json({ error: 'An error occurred while deleting the job' });
-//   }
-// });
 
 export default router;
