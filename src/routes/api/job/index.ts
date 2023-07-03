@@ -287,6 +287,72 @@ const deleteJobHandler: RequestHandler = async (
   res.json({ result: true });
 };
 
+/**
+ * @swagger
+ * /jobs/{jobId}:
+ *   get:
+ *     summary: Retrieve a job by ID
+ *     parameters:
+ *       - name: jobId
+ *         in: path
+ *         description: ID of the job
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the job
+ *         schema:
+ *           type: object
+ *           properties:
+ *             data:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 location:
+ *                   type: string
+ *                 duration:
+ *                   type: string
+ *                 startDate:
+ *                   type: string
+ *                   format: date
+ *                 requirements:
+ *                   type: string
+ *                 companyDetails:
+ *                   type: string
+ *                 contactDetails:
+ *                   type: string
+ *                 publishEndDate:
+ *                   type: string
+ *                   format: date
+ *                 duty:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         schema:
+ *           type: object
+ *           properties:
+ *             data:
+ *               type: null
+ */
+const getJobByIdHandler: RequestHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { jobId } = req.params;
+
+  const job = await getJobById(jobId);
+
+  if (!job) {
+    res.status(500)
+    res.json({ data: null });    
+    return;
+  }
+  res.json({ data: job });
+};
+
 const upsertJobSchema = Joi.object({
   title: Joi.string().required(),
   location: Joi.string().required(),
@@ -321,7 +387,31 @@ const routes: GenerateRouteOption[] = [
     method: "delete",
     handler: deleteJobHandler,
   },
+  {
+    path: `${mainPath}/:jobId`,
+    method: "get",
+    handler: getJobByIdHandler,
+  },
 ];
+
+// app.get('/jobs/:id', async (req: Request, res: Response): Promise<void> => {
+//   const { id }: { id: string } = req.params;
+
+//   try {
+//     const job: Job | null = await prisma.job.findUnique({
+//       where: { id: Number(id) },
+//     });
+
+//     if (!job) {
+//       res.status(404).json({ error: 'Job not found' });
+//       return;
+//     }
+
+//     res.json(job);
+//   } catch (error) {
+//     res.status(500).json({ error: 'An error occurred while fetching the job' });
+//   }
+// });
 
 generateRoute(routes, router);
 
