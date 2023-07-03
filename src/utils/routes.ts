@@ -20,6 +20,7 @@ export function generateRoute(
     res: Response,
     next: NextFunction
   ): void {
+    console.log(req.body);
     const { error } = schema.validate(req.body);
     if (error) {
       handleValidationError(error, res);
