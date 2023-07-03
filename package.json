@@ -41,8 +41,10 @@
     "eslint-import-resolver-typescript": "^3.5.5",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
+    "fs": "^0.0.1-security",
     "jest": "^29.5.0",
     "nodemon": "^2.0.22",
+    "path": "^0.12.7",
     "prettier": "^2.8.8",
     "supertest": "^6.3.3",
     "swagger-ui-express": "^4.6.3",
@@ -63,5 +65,8 @@
     "openai": "^3.3.0",
     "prisma": "^4.16.2",
     "swagger-jsdoc": "^6.2.8"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seeding/seed.ts"
   }
 }
