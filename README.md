@@ -79,12 +79,14 @@ There is env.sample in project. After clone please do the following step:
 1. Create new file and name it .env from .env.sample
 2. Open the .env file and add this OPENAI_API_KEY="YOUR_OPENAI_API_KEY", we cannot put it in .env.sample because openai does not allow to leak it in public repository
 3. Create new file and name it .env.test from .env. This is the environment file to be use for testing and also for migrate database to dev when you run `npm run migrate:dev`
+4. When run with `npm run docker:dev`it use the docker.env. Make sure you have all config there, especially the OPENAI_API_KEY
 
 ## Testing
 
 The API includes unit tests using the Jest framework. The 
 
 To run the tests, use the following command: `npm run test`
+
 
 ## Linting
 
